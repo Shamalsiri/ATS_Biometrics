@@ -7,7 +7,7 @@ package com.siriwardana.ats_biometrics;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.Manifest.permission_group.CAMERA;
+import static android.Manifest.permission.CAMERA;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 import androidx.annotation.NonNull;
@@ -18,9 +18,11 @@ import androidx.core.content.ContextCompat;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -31,10 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnEmployee, btnDBSize, btnDeleteDB, btnDeleteID;
 
-    private TextInputLayout tilID;
-
     private EditText etID;
-//    private PermissionsListener permissionsListener;
+    private LinearLayout llManagerOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +47,33 @@ public class MainActivity extends AppCompatActivity {
 
         //checks for permission
         checkUserPermission();
+
+        btnEmployee = (Button) findViewById(R.id.btn_employee);
+        btnDBSize = (Button) findViewById(R.id.btn_db_size);
+        btnDeleteDB = (Button) findViewById(R.id.btn_deleteDb);
+        btnDeleteID = (Button) findViewById(R.id.btn_deleteID);
+
+        etID = (EditText) findViewById(R.id.et_eid);
+
+        llManagerOptions = (LinearLayout) findViewById(R.id.ll_manager_options);
+
+        btnEmployee.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(llManagerOptions.getVisibility() == View.VISIBLE){
+                    Log.d(TAG, "Setting Manager options to invisible");
+                    llManagerOptions.setVisibility(View.INVISIBLE);
+                } else{
+                    llManagerOptions.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "Setting Manager options to visible");
+                }
+                return true;
+            }
+        });
+
     }
 
     private void checkUserPermission() {
-//        this.permissionsListener = permissionsListener;
         final int writeExtPermissions = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
         final int readExtPermissions  = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
         final int cameraPermissions   = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
@@ -66,13 +89,14 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             Log.d(TAG, "Requesting Permission");
-            ActivityCompat.requestPermissions(this, new String[] {WRITE_EXTERNAL_STORAGE,
-            READ_EXTERNAL_STORAGE}, APP_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(this,
+                    new String[] {WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, CAMERA},
+                    APP_PERMISSION_CODE);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+    public void onRequestPermissionsResult( int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         final int writeExtPermissions = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
@@ -82,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Write: "+ writeExtPermissions);
         Log.d(TAG, "Read: "+ readExtPermissions);
         Log.d(TAG, "Cam: "+ cameraPermissions);
-        Log.d(TAG, "Req: "+ requestCode);
 
         if(requestCode == APP_PERMISSION_CODE){
             if(writeExtPermissions == PERMISSION_GRANTED &&
@@ -93,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 Log.d(TAG, "Permission Denied");
                 Message.message(this, "Permission Denied, please grant permission for the app to run");
-                //Disable Employee Button
-////                btnEmployee.setEnabled(false);
+//                Disable Employee Button
+                btnEmployee.setEnabled(false);
             }
         }
     }
