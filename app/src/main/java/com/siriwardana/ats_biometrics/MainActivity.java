@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -56,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
         etID = (EditText) findViewById(R.id.et_eid);
 
         llManagerOptions = (LinearLayout) findViewById(R.id.ll_manager_options);
+
+        btnEmployee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BioViewActivity.class);
+                intent.putExtra("BUTTON", "IDENTIFY");
+                startActivity(intent);
+            }
+        });
 
         btnEmployee.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
