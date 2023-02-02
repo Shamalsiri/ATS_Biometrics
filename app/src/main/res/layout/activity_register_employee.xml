@@ -173,7 +173,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/state"
+        android:id="@+id/til_state"
 
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
 
@@ -186,9 +186,10 @@
         app:layout_constraintStart_toStartOf="@+id/til_street_address">
 
         <AutoCompleteTextView
+            android:id="@+id/actv_state"
             android:layout_width="145dp"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -200,7 +201,7 @@
         android:paddingRight="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/til_first_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/state">
+        app:layout_constraintStart_toEndOf="@+id/til_state">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_zip_code"
