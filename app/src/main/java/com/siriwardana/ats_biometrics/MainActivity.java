@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
         btnEmployee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, BioViewActivity.class);
+//                Intent intent = new Intent(MainActivity.this, BioViewActivity.class);
+                Intent intent = new Intent(MainActivity.this, RegisterEmployee.class);
                 intent.putExtra("BUTTON", "IDENTIFY");
                 startActivity(intent);
             }
