@@ -20,6 +20,9 @@
         android:theme="@style/Theme.ATS_Biometrics"
         tools:targetApi="31">
         <activity
+            android:name=".EmployeeInfo"
+            android:exported="false" />
+        <activity
             android:name=".RegisterEmployee"
             android:exported="false" />
         <activity
