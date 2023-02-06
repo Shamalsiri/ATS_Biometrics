@@ -216,6 +216,7 @@ public class DB_Adapter {
 
     public boolean doesEntryExist(String eID){
         String query = "SELECT * FROM "+DB_Helper.TABLE_NAME+" WHERE "+DB_Helper.EID+" = "+eID;
+        Log.d(TAG, "Query: "+query);
 
         SQLiteDatabase db = db_helper.getWritableDatabase();
 
@@ -236,21 +237,21 @@ public class DB_Adapter {
         // DB information
         private static final String DB_NAME = "EMPLOYEE_DB";
         private static final String TABLE_NAME = "EMPLOYEE_TABLE";
-        private static final int DB_VERSION = 0;
+        private static final int DB_VERSION = 4;
 
         // DB Fields
-        private static final String EID = "eID";
-        private static final String FIRST_NAME = "fName";
-        private static final String LAST_NAME = "lName";
-        private static final String STREET_ADDRESS = "stAddress";
-        private static final String CITY = "city";
-        private static final String STATE = "state";
-        private static final String ZIP_CODE = "zipCode";
-        private static final String DOB = "dob";
-        private static final String AGE = "age";
-        private static final String SEX = "sex";
-        private static final String DEPT = "dept";
-        private static final String ROLE = "role";
+        private static final String EID = "EID";
+        private static final String FIRST_NAME = "FNAME";
+        private static final String LAST_NAME = "LNAME";
+        private static final String STREET_ADDRESS = "STADDR";
+        private static final String CITY = "CITY";
+        private static final String STATE = "STATE";
+        private static final String ZIP_CODE = "ZIPCODE";
+        private static final String DOB = "DOB";
+        private static final String AGE = "AGE";
+        private static final String SEX = "SEX";
+        private static final String DEPT = "DEPT";
+        private static final String ROLE = "ROLE";
 
         // Queries
         private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+"("+
