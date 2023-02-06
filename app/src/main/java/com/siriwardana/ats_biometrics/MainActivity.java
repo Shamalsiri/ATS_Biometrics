@@ -25,7 +25,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.accutime.biometrics.BiometricError;
+import com.accutime.biometrics.BiometricView;
+import com.accutime.biometrics.InitializationListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnEmployee, btnDBSize, btnDeleteDB, btnDeleteID;
 
-    private EditText etID;
+    private TextInputEditText etID;
     private LinearLayout llManagerOptions;
 
     @Override
@@ -54,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         btnDeleteDB = (Button) findViewById(R.id.btn_deleteDb);
         btnDeleteID = (Button) findViewById(R.id.btn_deleteID);
 
-        etID = (EditText) findViewById(R.id.et_eid);
+        etID = (TextInputEditText) findViewById(R.id.et_eid);
 
         llManagerOptions = (LinearLayout) findViewById(R.id.ll_manager_options);
 
@@ -82,6 +89,130 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnDeleteDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DB_Adapter db_adapter = new DB_Adapter(MainActivity.this);
+                db_adapter.deleteTable();
+                db_adapter.createTable();
+
+                BiometricView bioView = new BiometricView(MainActivity.this);
+
+                bioView.initialize(new InitializationListener() {
+                    @Override
+                    public void initializationStart() {
+
+                    }
+
+                    @Override
+                    public void initializationProgress(float v) {
+
+                    }
+
+                    @Override
+                    public void initializationComplete() {
+                        Log.d(TAG, "Biometric View Initialized");
+                        boolean deleted;
+                        try {
+                            Log.d(TAG, "Extracting list of IDs");
+                            List<String> idList = bioView.getEnrollmentIds();
+                            Log.d(TAG, "Deleting Database");
+                            deleted = bioView.deleteEnrollments(idList);
+                            if(deleted){
+                                Log.d(TAG, "Database Deleted");
+                                Message.message(getApplicationContext(), "Database Deleted");
+                            }else{
+                                Log.d(TAG,"Failed to delete database");
+                                Message.message(getApplicationContext(), "Failed to delete database");
+                            }
+                        } catch (BiometricError e) {
+                            Log.d(TAG, e.getMessage());
+
+                        }
+                    }
+
+                    @Override
+                    public void initializationError(BiometricError biometricError) {
+
+                    }
+
+                    @Override
+                    public void initializationStatusMessage(String s) {
+
+                    }
+                });
+
+            }
+        });
+
+        btnDBSize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DB_Adapter db_adapter = new DB_Adapter(MainActivity.this);
+                Message.message(MainActivity.this, "Database Size: "+db_adapter.getNumEntries());
+                Log.d(TAG, "SQLite DB Size: "+db_adapter.getNumEntries());
+            }
+        });
+
+        btnDeleteID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id = etID.getText().toString().trim();
+
+                // Delete from SQL db
+                DB_Adapter db_adapter = new DB_Adapter(getApplicationContext());
+                db_adapter.deleteEntry(id);
+
+                // Initialize Bio
+
+                BiometricView bioView = new BiometricView(getApplicationContext());
+                bioView.initialize(new InitializationListener() {
+                    @Override
+                    public void initializationStart() {
+
+                    }
+
+                    @Override
+                    public void initializationProgress(float v) {
+
+                    }
+
+                    @Override
+                    public void initializationComplete() {
+                        Log.d(TAG, "Adding id to List");
+                        List<String> idList = new ArrayList<>(1);
+                        idList.add(id);
+                        boolean deleted;
+
+                        Log.d(TAG,"Deleting "+id+" from Biometric Database");
+                        try{
+                            deleted = bioView.deleteEnrollments(idList);
+                            if(deleted){
+                                Message.message(getApplicationContext(),  id+" deleted from bio db");
+                                Log.d(TAG,id+" Deleted from biometric database");
+                            }else{
+                                Message.message(getApplicationContext(),  "Failed to  delete "+id+" from bio db");
+                                Log.d(TAG,"Failed to  delete "+id+" from bio db");
+                            }
+                        }catch (BiometricError e){
+                            Log.d(TAG, e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void initializationError(BiometricError biometricError) {
+
+                    }
+
+                    @Override
+                    public void initializationStatusMessage(String s) {
+
+                    }
+                });
+
+            }
+        });
     }
 
     private void checkUserPermission() {
