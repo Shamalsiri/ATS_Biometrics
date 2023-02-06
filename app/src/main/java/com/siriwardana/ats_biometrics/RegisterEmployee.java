@@ -3,21 +3,40 @@ package com.siriwardana.ats_biometrics;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.lang.reflect.Array;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterEmployee extends AppCompatActivity {
 
-    private TextInputLayout tilState;
-    private AutoCompleteTextView actvState;
+    private final String TAG = "SHAMMY";
+
+    private AutoCompleteTextView actvState, actvDOB;
+    private TextInputLayout tilDOB;
+    private TextInputEditText etEmployeeID, etFirstName, etLastName, etAge,
+            etStAddress, etCity, etZipCode, etDepartment, etRole;
+    private RadioGroup rgSex;
+    private RadioButton rbSex;
+    private Button btnCancel, btnEnroll;
+
+    private String eId, fName, lName, dob, age, sex, stAddress,
+            city, state, zipCode, department, role;
 
     private ArrayAdapter<String> arrayAdapter;
 
@@ -26,11 +45,31 @@ public class RegisterEmployee extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_employee);
 
+        etEmployeeID = (TextInputEditText) findViewById(R.id.et_employee_id);
+        etFirstName = (TextInputEditText) findViewById(R.id.et_first_name);
+        etLastName = (TextInputEditText) findViewById(R.id.et_last_name);
+        etAge = (TextInputEditText) findViewById(R.id.et_age);
+        etStAddress = (TextInputEditText) findViewById(R.id.et_street_address);
+        etCity = (TextInputEditText) findViewById(R.id.et_city);
+        etZipCode = (TextInputEditText) findViewById(R.id.et_zip_code);
+        etDepartment = (TextInputEditText) findViewById(R.id.et_department);
+        etRole = (TextInputEditText) findViewById(R.id.et_role);
+
+        rgSex = (RadioGroup) findViewById(R.id.rg_sex);
+        rbSex = (RadioButton) findViewById(R.id.rb_male);
+
+        btnCancel = (Button) findViewById(R.id.btn_cancel);
+        btnEnroll = (Button) findViewById(R.id.btn_enroll);
+
+        actvDOB = (AutoCompleteTextView)  findViewById(R.id.actv_dob);
         actvState = (AutoCompleteTextView) findViewById(R.id.actv_state);
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.states) );
+        state = null;
+        zipCode = null;
 
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.states) );
         actvState.setAdapter(arrayAdapter);
-
+        // Hide Keyboard
         actvState.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -40,16 +79,235 @@ public class RegisterEmployee extends AppCompatActivity {
                 }
             }
         });
-
-
+        // Pick clicked item
         actvState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 actvState.setShowSoftInputOnFocus(false);
                 String item = parent.getItemAtPosition(position).toString();
-                Message.message(RegisterEmployee.this,"Item: "+item);
+                state = item;
+            }
+
+
+        });
+
+        //Material Date Picker
+        MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("Enter the Date of Birth");
+        final MaterialDatePicker materialDatePicker = builder.build();
+
+        actvDOB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(actvDOB.getWindowToken(), 0);
+                    actvDOB.setShowSoftInputOnFocus(false);
+                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+                }
             }
         });
 
+        materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+            @Override
+            public void onPositiveButtonClick(Object selection) {
+                actvDOB.setText(materialDatePicker.getHeaderText());
+            }
+        });
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //back stack
+                finish();
+            }
+        });
+
+        btnEnroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getInputs();
+                Log.d(TAG,"DOB Text Size: "+actvDOB.getTextSize());
+                validateInputs();
+            }
+        });
+    }
+
+    private void enrollToDB(){
+        DB_Adapter db_adapter = new DB_Adapter(RegisterEmployee.this);
+        if(db_adapter.doesEntryExist(eId)){
+            Log.d(TAG, eId+" exists in the database");
+        }else {
+            Log.d(TAG, eId+" doesn't exists in the database");
+            try {
+                insertEntryToDB();
+            } catch (JSONException e) {
+                Log.d(TAG, "Failed to insert entry to database");
+                Log.d(TAG, "Catch Log: "+e.getMessage());
+            }
+        }
+        openEnrollBioView();
+    }
+
+    private void openEnrollBioView() {
+        Intent intent = new Intent(this, BioViewActivity.class);
+        intent.putExtra("BUTTON", "ENROLL");
+        intent.putExtra("ID", eId);
+
+        startActivity(intent);
+    }
+
+    private void insertEntryToDB() throws JSONException {
+        int id = Integer.parseInt(eId);
+        JSONObject object = JSON_Adapter.makeJSONObject(id, fName, lName, stAddress, city, state,
+                zipCode, dob, age, sex, department, role);
+        DB_Adapter db_adapter = new DB_Adapter(this);
+
+        if(db_adapter.doesEntryExist(eId)){
+            Message.message(this, "Employee ID exists in the database");
+        }else{
+            db_adapter.insertEntry(object);
+        }
+    }
+
+    private void getInputs(){
+        eId = etEmployeeID.getText().toString().trim();
+        fName = etFirstName.getText().toString().trim();
+        lName = etLastName.getText().toString().trim();
+
+        age = etAge.getText().toString().trim();
+        // Getting clicked radio button
+        int radioID = rgSex.getCheckedRadioButtonId();
+        rbSex = findViewById(radioID);
+        // Sex is selected in the validateInput method
+        stAddress = etStAddress.getText().toString().trim();
+        city = etCity.getText().toString().trim();
+        zipCode = etZipCode.getText().toString().trim();
+
+        role = etRole.getText().toString().trim();
+
+//        etDOB.getText().toString().trim();
+        dob = actvDOB.getText().toString().trim();
+
+        if(etDepartment.getText().toString().trim() != null){
+            department = etDepartment.getText().toString().trim();
+        }
+
+        // State is selected in setOnItemClickListener
+    }
+
+    private void validateInputs(){
+        if(isEmptyOrNull(eId)){
+            Message.message(this, "Enter a unique Employee ID#");
+            Log.d(TAG, "Employee ID# is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Employee ID entered: "+eId);
+        }
+
+        if(isEmptyOrNull(fName)){
+            Message.message(this, "Enter a First Name");
+            Log.d(TAG, "First Name is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "First Name entered: "+fName);
+        }
+
+        if(isEmptyOrNull(lName)){
+            Message.message(this, "Enter a Last Name");
+            Log.d(TAG, "Last Name is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Last Name entered: "+lName);
+        }
+
+        if(isEmptyOrNull(stAddress)){
+            Message.message(this, "Enter a Street Address");
+            Log.d(TAG, "Street Address is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Street Address entered: "+stAddress);
+        }
+
+        if(isEmptyOrNull(city)){
+            Message.message(this, "Enter a City");
+            Log.d(TAG, "City is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Street Address entered: "+city);
+        }
+
+        Log.d(TAG,"State: "+state);
+        if(state == null){
+            Log.d(TAG,"Validate State: "+state);
+            Message.message(this, "Enter a State");
+            Log.d(TAG, "State is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "State entered: "+state);
+        }
+
+        if(isEmptyOrNull(zipCode)){
+            Message.message(this, "Enter a Zip Code");
+            Log.d(TAG, "Zip Code is empty or null");
+            return;
+        }else if (zipCode.length() != 5 ){
+            Message.message(this, "Invalid zip Code, enter a valid zip Code");
+            Log.d(TAG, "Zip Code is invalid");
+            return;
+        }else{
+            Log.d(TAG, "Zip Code entered: "+zipCode);
+        }
+
+        if(isEmptyOrNull(dob)){
+            Message.message(this, "Pick a Date of Birth");
+            Log.d(TAG, "Date of Birth is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Date of Birth entered: "+dob);
+        }
+
+        if(isEmptyOrNull(age)){
+            Message.message(this, "Enter an Age");
+            Log.d(TAG, "Age is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Age entered: "+age);
+        }
+
+        if(rbSex != null){
+            sex = rbSex.getText().toString().trim();
+            Log.d(TAG, "Sex selected: "+sex);
+        }else{
+            Message.message(this, "Pick a Sex");
+            Log.d(TAG, "Sex not selected");
+            return;
+        }
+
+        if(isEmptyOrNull(department)){
+            Message.message(this, "Enter a Department");
+            Log.d(TAG, "Department is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Department entered: "+department);
+        }
+
+        if(isEmptyOrNull(role)){
+            Message.message(this, "Enter a Role");
+            Log.d(TAG, "Role is empty or null");
+            return;
+        }else{
+            Log.d(TAG, "Role entered: "+role);
+        }
+
+        enrollToDB();
+    }
+
+    public boolean isEmptyOrNull(String value){
+        if(value.compareTo("") == 0 || value == null){
+            return true;
+        }
+        return false;
     }
 }
