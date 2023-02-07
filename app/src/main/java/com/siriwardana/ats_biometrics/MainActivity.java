@@ -15,21 +15,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.accutime.biometrics.BiometricError;
 import com.accutime.biometrics.BiometricView;
 import com.accutime.biometrics.InitializationListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                Intent intent = new Intent(MainActivity.this, BioViewActivity.class);
-                Intent intent = new Intent(MainActivity.this, RegisterEmployee.class);
+                Intent intent = new Intent(MainActivity.this, RegisterEmployeeActivity.class);
                 intent.putExtra("BUTTON", "IDENTIFY");
                 startActivity(intent);
             }
@@ -213,6 +210,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        Button test = (Button) findViewById(R.id.btn_test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EmployeeInfoActivity.class);
+                intent.putExtra("ID", "1");
+                startActivity(intent);
+            }
+        });
     }
 
     private void checkUserPermission() {
@@ -263,4 +270,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }

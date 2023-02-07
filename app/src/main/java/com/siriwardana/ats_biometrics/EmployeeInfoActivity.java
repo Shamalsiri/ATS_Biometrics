@@ -2,16 +2,28 @@ package com.siriwardana.ats_biometrics;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.accutime.biometrics.BiometricError;
 import com.accutime.biometrics.BiometricView;
 import com.accutime.biometrics.InitializationListener;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,16 +31,35 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeInfo extends AppCompatActivity {
+public class EmployeeInfoActivity extends AppCompatActivity {
 
     private final String TAG = "SHAMMY";
     private Button btnEditInfo, btnReEnrollBio, btnDone, btnDelete;
     private TextView tvID, tvFirstName, tvLastName, tvStreetAddress, tvCity, tvState, tvZipCode,
                     tvAge, tvSex, tvDepartment, tvRole;
-    private String id;
+    private String id, firstName, lastName, streetAddress, city, state,
+                    zipCode, dob, age, sex, department, role;
+
+    // Edit Info Popup - UI elements
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+    private View editEmployeePopUp;
+    private Button btnCancel, btnSave;
+    private AutoCompleteTextView actvState, actvDOB;
+    private TextInputEditText etEmployeeID, etFirstName, etLastName, etAge,
+            etStAddress, etCity, etZipCode, etDepartment, etRole;
+    private RadioGroup rgSex;
+    private RadioButton rbSex;
+    private ArrayAdapter<String> arrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Full Screen Flags
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_employee_info);
 
         id = getIntent().getStringExtra("ID");
@@ -83,6 +114,84 @@ public class EmployeeInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Edit popup
+                createNewEditDialog();
+            }
+        });
+    }
+
+    private void createNewEditDialog() {
+
+        dialogBuilder = new AlertDialog.Builder(this);
+        editEmployeePopUp = getLayoutInflater().inflate(R.layout.edit_details_popup, null);
+
+        btnSave = (Button) findViewById(R.id.btn_save);
+        btnCancel = (Button)findViewById(R.id.btn_cancel);
+
+        tvID = (TextView) findViewById(R.id.tv_employee_id);
+
+        etFirstName = (TextInputEditText) findViewById(R.id.et_first_name);
+        etLastName = (TextInputEditText) findViewById(R.id.et_last_name);
+        etAge = (TextInputEditText) findViewById(R.id.et_age);
+        etStAddress = (TextInputEditText) findViewById(R.id.et_street_address);
+        etCity = (TextInputEditText) findViewById(R.id.et_city);
+        etZipCode = (TextInputEditText) findViewById(R.id.et_zip_code);
+        etDepartment = (TextInputEditText) findViewById(R.id.et_department);
+        etRole = (TextInputEditText) findViewById(R.id.et_role);
+
+        rgSex = (RadioGroup) findViewById(R.id.rg_sex);
+        rbSex = (RadioButton) findViewById(R.id.rb_male);
+
+        actvDOB = (AutoCompleteTextView) findViewById(R.id.actv_dob);
+        actvState = (AutoCompleteTextView) findViewById(R.id.actv_state);
+
+        dialogBuilder.setView(editEmployeePopUp);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+//        arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
+//                getResources().getStringArray(R.array.states) );
+//        actvState.setAdapter(arrayAdapter);
+
+/*        actvState.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(actvState.getWindowToken(), 0);
+                }
+            }
+        });
+        // Pick clicked item
+        actvState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                actvState.setShowSoftInputOnFocus(false);
+                String item = parent.getItemAtPosition(position).toString();
+                state = item;
+            }
+        });*/
+
+        //Material Date Picker
+        MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
+        builder.setTitleText("Enter the Date of Birth");
+        final MaterialDatePicker materialDatePicker = builder.build();
+
+//        actvDOB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if(hasFocus){
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(actvDOB.getWindowToken(), 0);
+//                    actvDOB.setShowSoftInputOnFocus(false);
+//                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+//                }
+//            }
+//        });
+
+        materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+            @Override
+            public void onPositiveButtonClick(Object selection) {
+                actvDOB.setText(materialDatePicker.getHeaderText());
             }
         });
     }

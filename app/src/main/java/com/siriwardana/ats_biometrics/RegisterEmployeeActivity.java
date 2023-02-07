@@ -23,7 +23,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RegisterEmployee extends AppCompatActivity {
+public class RegisterEmployeeActivity extends AppCompatActivity {
 
     private final String TAG = "SHAMMY";
 
@@ -87,8 +87,6 @@ public class RegisterEmployee extends AppCompatActivity {
                 String item = parent.getItemAtPosition(position).toString();
                 state = item;
             }
-
-
         });
 
         //Material Date Picker
@@ -135,7 +133,7 @@ public class RegisterEmployee extends AppCompatActivity {
     }
 
     private void enrollToDB(){
-        DB_Adapter db_adapter = new DB_Adapter(RegisterEmployee.this);
+        DB_Adapter db_adapter = new DB_Adapter(RegisterEmployeeActivity.this);
         if(db_adapter.doesEntryExist(eId)){
             Log.d(TAG, eId+" exists in the database");
         }else {

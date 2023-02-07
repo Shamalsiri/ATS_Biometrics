@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="50dp"
     android:paddingRight="50dp"
-    tools:context=".RegisterEmployee">
+    tools:context=".RegisterEmployeeActivity">
 
     <TextView
         android:id="@+id/textView"
