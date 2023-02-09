@@ -6,10 +6,11 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
+
     <TextView
         android:id="@+id/tv_employee_info"
         android:layout_width="wrap_content"
-        android:layout_height="27dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Edit Employee Info"
         android:textSize="24sp"
@@ -24,9 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Employee ID #: 0000"
-        app:layout_constraintEnd_toEndOf="@+id/tv_employee_info"
-        app:layout_constraintStart_toStartOf="@+id/tv_employee_info"
-        app:layout_constraintTop_toBottomOf="@+id/tv_employee_info" />
+        app:layout_constraintEnd_toEndOf="@id/tv_employee_info"
+        app:layout_constraintStart_toStartOf="@id/tv_employee_info"
+        app:layout_constraintTop_toBottomOf="@id/tv_employee_info" />
 
     <TextView
         android:id="@+id/tv_fill_needed"
@@ -35,24 +36,24 @@
         android:layout_marginTop="16dp"
         android:text="*Enter only the values you wish to edit"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="@+id/tv_employee_id"
-        app:layout_constraintStart_toStartOf="@+id/tv_employee_id"
-        app:layout_constraintTop_toBottomOf="@+id/tv_employee_id" />
+        app:layout_constraintEnd_toEndOf="@id/tv_employee_id"
+        app:layout_constraintStart_toStartOf="@id/tv_employee_id"
+        app:layout_constraintTop_toBottomOf="@id/tv_employee_id" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_first_name"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="68dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_fill_needed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_fill_needed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_first_name"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="First Name"
             android:inputType="textPersonName"
@@ -63,15 +64,17 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_last_name"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/til_first_name"
+        app:layout_constraintEnd_toStartOf="@+id/tv_fill_needed"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/til_first_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_last_name"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Last Name"
             android:inputType="textPersonName"
@@ -82,16 +85,17 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_street_address"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/til_last_name"
-        app:layout_constraintStart_toEndOf="@+id/til_last_name">
+        app:layout_constraintBaseline_toBaselineOf="@+id/til_first_name"
+        app:layout_constraintEnd_toStartOf="@+id/til_city"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/tv_fill_needed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_street_address"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Street Address"
             android:inputType="textPersonName"
@@ -102,15 +106,16 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_city"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/til_first_name"
-        app:layout_constraintStart_toEndOf="@+id/til_street_address">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_city"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="City"
             android:inputType="textPersonName"
@@ -121,7 +126,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_dob"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
@@ -132,7 +137,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_dob"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Date of Birth"
             android:inputType="none"
@@ -143,17 +148,16 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_age"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/til_dob"
         app:layout_constraintEnd_toEndOf="@+id/til_last_name"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/til_first_name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_age"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Age"
             android:inputType="textPersonName"
@@ -165,7 +169,7 @@
         android:id="@+id/til_state"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:hint="State"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
@@ -173,10 +177,10 @@
         app:layout_constraintEnd_toEndOf="@+id/til_street_address"
         app:layout_constraintStart_toStartOf="@+id/til_street_address">
 
-        <AutoCompleteTextView
-            android:id="@+id/actv_state"
-            android:layout_width="139dp"
-            android:layout_height="38dp"
+        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+            android:id="@+id/actv_state1"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
             android:inputType="none"
             android:textSize="16sp" />
 
@@ -185,16 +189,16 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_zip_code"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/til_state"
         app:layout_constraintEnd_toEndOf="@+id/til_city"
-        app:layout_constraintStart_toEndOf="@+id/til_street_address">
+        app:layout_constraintStart_toStartOf="@+id/til_city">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_zip_code"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Zip Code"
             android:inputType="textPersonName"
@@ -245,7 +249,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_department"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
@@ -254,7 +258,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_department"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Department"
             android:inputType="textPersonName"
@@ -265,16 +269,16 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_role"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/til_department"
         app:layout_constraintEnd_toEndOf="@+id/til_zip_code"
-        app:layout_constraintStart_toEndOf="@+id/til_state">
+        app:layout_constraintStart_toStartOf="@+id/til_zip_code">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_role"
-            android:layout_width="139dp"
+            android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Role"
             android:inputType="textPersonName"
@@ -304,5 +308,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btn_cancel" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

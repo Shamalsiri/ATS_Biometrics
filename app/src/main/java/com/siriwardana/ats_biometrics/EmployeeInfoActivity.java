@@ -45,8 +45,8 @@ public class EmployeeInfoActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private View editEmployeePopUp;
     private Button btnCancel, btnSave;
-    private AutoCompleteTextView actvState, actvDOB;
-    private TextInputEditText etEmployeeID, etFirstName, etLastName, etAge,
+    private AutoCompleteTextView actvState;
+    private TextInputEditText etEmployeeID, etFirstName, etLastName, etDOB, etAge,
             etStAddress, etCity, etZipCode, etDepartment, etRole;
     private RadioGroup rgSex;
     private RadioButton rbSex;
@@ -124,43 +124,53 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         dialogBuilder = new AlertDialog.Builder(this);
         editEmployeePopUp = getLayoutInflater().inflate(R.layout.edit_details_popup, null);
 
-        btnSave = (Button) findViewById(R.id.btn_save);
-        btnCancel = (Button)findViewById(R.id.btn_cancel);
+        btnSave = (Button) editEmployeePopUp.findViewById(R.id.btn_save);
+        btnCancel = (Button) editEmployeePopUp.findViewById(R.id.btn_cancel);
 
-        tvID = (TextView) findViewById(R.id.tv_employee_id);
+        tvID = (TextView) editEmployeePopUp.findViewById(R.id.tv_employee_id);
 
-        etFirstName = (TextInputEditText) findViewById(R.id.et_first_name);
-        etLastName = (TextInputEditText) findViewById(R.id.et_last_name);
-        etAge = (TextInputEditText) findViewById(R.id.et_age);
-        etStAddress = (TextInputEditText) findViewById(R.id.et_street_address);
-        etCity = (TextInputEditText) findViewById(R.id.et_city);
-        etZipCode = (TextInputEditText) findViewById(R.id.et_zip_code);
-        etDepartment = (TextInputEditText) findViewById(R.id.et_department);
-        etRole = (TextInputEditText) findViewById(R.id.et_role);
+        etFirstName = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_first_name);
+        etLastName = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_last_name);
+        etAge = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_age);
+        etStAddress = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_street_address);
+        etCity = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_city);
+        etZipCode = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_zip_code);
+        etDepartment = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_department);
+        etRole = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_role);
+        etDOB = (TextInputEditText) editEmployeePopUp.findViewById(R.id.et_dob);
 
-        rgSex = (RadioGroup) findViewById(R.id.rg_sex);
-        rbSex = (RadioButton) findViewById(R.id.rb_male);
+        rgSex = (RadioGroup) editEmployeePopUp.findViewById(R.id.rg_sex);
+        rbSex = (RadioButton) editEmployeePopUp.findViewById(R.id.rb_male);
 
-        actvDOB = (AutoCompleteTextView) findViewById(R.id.actv_dob);
-        actvState = (AutoCompleteTextView) findViewById(R.id.actv_state);
+        actvState = (AutoCompleteTextView) editEmployeePopUp.findViewById(R.id.actv_state1);
+
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.states));
+        actvState.setAdapter(arrayAdapter);
 
         dialogBuilder.setView(editEmployeePopUp);
         dialog = dialogBuilder.create();
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width =900;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         dialog.show();
+        dialog.getWindow().setAttributes(lp);
 
-//        arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1,
-//                getResources().getStringArray(R.array.states) );
-//        actvState.setAdapter(arrayAdapter);
 
-/*        actvState.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        actvState.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(actvState.getWindowToken(), 0);
+                    actvState.setShowSoftInputOnFocus(false);
                 }
             }
         });
+
+
         // Pick clicked item
         actvState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -169,29 +179,40 @@ public class EmployeeInfoActivity extends AppCompatActivity {
                 String item = parent.getItemAtPosition(position).toString();
                 state = item;
             }
-        });*/
+        });
 
         //Material Date Picker
         MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
         builder.setTitleText("Enter the Date of Birth");
         final MaterialDatePicker materialDatePicker = builder.build();
 
-//        actvDOB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if(hasFocus){
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(actvDOB.getWindowToken(), 0);
-//                    actvDOB.setShowSoftInputOnFocus(false);
-//                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
-//                }
-//            }
-//        });
+        etDOB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etDOB.getWindowToken(), 0);
+                    etDOB.setShowSoftInputOnFocus(false);
+                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+
+                }
+            }
+        });
+        etDOB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etDOB.getWindowToken(), 0);
+                    etDOB.setShowSoftInputOnFocus(false);
+                    materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+
+            }
+        });
 
         materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
             @Override
             public void onPositiveButtonClick(Object selection) {
-                actvDOB.setText(materialDatePicker.getHeaderText());
+                etDOB.setText(materialDatePicker.getHeaderText());
             }
         });
     }
