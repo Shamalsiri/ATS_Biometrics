@@ -18,6 +18,10 @@ public class JSON_Adapter {
     private static final String DEPT = "DEPT";
     private static final String ROLE = "ROLE";
 
+    public JSON_Adapter(){
+
+    }
+
     public static JSONObject makeJSONObject(int id, String fName, String lName, String stAddress,
                                             String city, String state, String zipCode, String dob,
                                             String age, String sex, String dept, String role) throws JSONException {

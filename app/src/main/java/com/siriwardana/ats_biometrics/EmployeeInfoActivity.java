@@ -28,14 +28,19 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class EmployeeInfoActivity extends AppCompatActivity {
 
     private final String TAG = "SHAMMY";
     private Button btnEditInfo, btnReEnrollBio, btnDone, btnDelete;
-    private TextView tvID, tvFirstName, tvLastName, tvStreetAddress, tvCity, tvState, tvZipCode,
+    private TextView tvGreeting, tvID, tvFirstName, tvLastName, tvStreetAddress, tvCity, tvState, tvZipCode,
                     tvAge, tvSex, tvDepartment, tvRole;
     private String id, firstName, lastName, streetAddress, city, state,
                     zipCode, dob, age, sex, department, role;
@@ -69,6 +74,7 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         btnDone = (Button) findViewById(R.id.btn_done);
         btnDelete = (Button) findViewById(R.id.btn_delete);
 
+        tvGreeting = (TextView) findViewById(R.id.tv_greeting);
         tvID = (TextView) findViewById(R.id.tv_id);
         tvFirstName = (TextView) findViewById(R.id.tv_first_name);
         tvLastName = (TextView) findViewById(R.id.tv_last_name);
@@ -87,6 +93,7 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Log.d(TAG, e.getMessage());
         }
+        setGreeting();
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +126,8 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    * Create the dialog box with the editText to edit the employee details */
     private void createNewEditDialog() {
 
         dialogBuilder = new AlertDialog.Builder(this);
@@ -170,7 +179,6 @@ public class EmployeeInfoActivity extends AppCompatActivity {
             }
         });
 
-
         // Pick clicked item
         actvState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -198,6 +206,7 @@ public class EmployeeInfoActivity extends AppCompatActivity {
                 }
             }
         });
+
         etDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,10 +220,130 @@ public class EmployeeInfoActivity extends AppCompatActivity {
 
         materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
             @Override
-            public void onPositiveButtonClick(Object selection) {
+            public void onPositiveButtonClick(Object epochTime) {
                 etDOB.setText(materialDatePicker.getHeaderText());
+                Log.d(TAG, ""+(long)materialDatePicker.getSelection());
+
+                String c = Calendar.getInstance().get(YE);
+                Log.d(TAG, "c: "+c);
             }
         });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //define save here
+                checkValues();
+                dialog.dismiss();
+                //last move post info
+//                postInfo();
+            }
+        });
+    }
+
+    private void checkValues() {
+
+        //Check First Name for Changes
+        if(etFirstName.getText().toString().trim().compareTo("") != 0){
+            firstName = etFirstName.getText().toString().trim();
+        }
+        Log.d(TAG, "F Name: "+ firstName);
+
+        //Check Last Name for Changes
+        if(etLastName.getText().toString().trim().compareTo("") != 0){
+            lastName = etLastName.getText().toString().trim();
+        }
+        Log.d(TAG, "L Name: "+ lastName);
+
+        //Check Street Address for Changes
+        if(etStAddress.getText().toString().trim().compareTo("") != 0){
+            streetAddress = etStAddress.getText().toString().trim();
+        }
+        Log.d(TAG, "St Address: "+ streetAddress);
+
+        //Check City for Changes
+        if(etCity.getText().toString().trim().compareTo("") != 0){
+            city = etCity.getText().toString().trim();
+        }
+        Log.d(TAG, "City: "+ city);
+        actvState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String temp = actvState.getText().toString().trim();
+                if(temp.compareTo(state) != 0 && temp.compareTo("") != 0){
+                    state = temp;
+                }
+            }
+        });
+        Log.d(TAG, "State: "+ state);
+
+        //Check Zip Code for Changes
+        if(etZipCode.getText().toString().trim().compareTo("") != 0){
+            zipCode = etZipCode.getText().toString().trim();
+        }
+        Log.d(TAG, "Zip Code: "+ zipCode);
+
+        //Check Date of Birth for Changes
+        if(etDOB.getText().toString().trim().compareTo("") != 0){
+            dob = etDOB.getText().toString().trim();
+        }
+        Log.d(TAG, "DOB: "+ dob);
+
+        //Check Age for Changes
+        if(etAge.getText().toString().trim().compareTo("") != 0){
+            age = etAge.getText().toString().trim();
+        }
+        Log.d(TAG, "Age: "+ age);
+
+        //Check Sex for Changes
+        int radioId = rgSex.getCheckedRadioButtonId();
+        if(radioId != -1){
+            rbSex = (RadioButton) editEmployeePopUp.findViewById(radioId);
+
+            if(rbSex.getText().toString().compareTo("") != 0){
+                Log.d(TAG, rbSex.getText().toString().trim());
+                sex = rbSex.getText().toString();
+            }
+        }
+        Log.d(TAG, "SEX: "+ sex);
+
+        //Check Department for Changes
+        if(etDepartment.getText().toString().trim().compareTo("") != 0){
+            department = etDepartment.getText().toString().trim();
+        }
+        Log.d(TAG, "Department: "+ department);
+
+        //Check Role for Changes
+        if(etRole.getText().toString().trim().compareTo("") != 0){
+            role = etRole.getText().toString().trim();
+        }
+        Log.d(TAG, "Role: "+ role);
+
+        try {
+            updateDatabase();
+            getEmployeeDetails();
+        } catch (JSONException e) {
+            Log.d(TAG, "Update Error");
+            Log.d(TAG, e.toString());
+        }
+        setGreeting();
+
+    }
+
+    private void updateDatabase() throws JSONException {
+        JSON_Adapter jAdapter = new JSON_Adapter();
+        JSONObject empDetails = jAdapter.makeJSONObject(Integer.parseInt(id), firstName, lastName,
+                        streetAddress, city, state, zipCode, dob, age, sex,department, role);
+
+        DB_Adapter db = new DB_Adapter(this);
+        db.editEntry(id, empDetails);
     }
 
     /*
@@ -226,26 +355,28 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         DB_Adapter db_adapter = new DB_Adapter(this);
         JSONObject employeeDetails = db_adapter.getEmployeeData(id);
 
+        firstName = JSON_Adapter.getFirstName(employeeDetails);
+        lastName = JSON_Adapter.getLastName(employeeDetails);
+        streetAddress = JSON_Adapter.getStreetAddress(employeeDetails);
+        city = JSON_Adapter.getCity(employeeDetails);
+        state = JSON_Adapter.getState(employeeDetails);
+        zipCode = JSON_Adapter.getZipCode(employeeDetails);
+        dob = JSON_Adapter.getDOB(employeeDetails);
+        age = JSON_Adapter.getAge(employeeDetails);
+        sex = JSON_Adapter.getSex(employeeDetails);
+        department = JSON_Adapter.getDept(employeeDetails);
+        role = JSON_Adapter.getRole(employeeDetails);
+
         tvID.setText("ID Number: "+id);
-
         tvFirstName.setText(JSON_Adapter.getFirstName(employeeDetails));
-
         tvLastName.setText(JSON_Adapter.getLastName(employeeDetails));
-
         tvStreetAddress.setText(JSON_Adapter.getStreetAddress(employeeDetails));
-
         tvCity.setText(JSON_Adapter.getCity(employeeDetails));
-
         tvState.setText(JSON_Adapter.getState(employeeDetails));
-
         tvZipCode.setText(JSON_Adapter.getState(employeeDetails));
-
         tvAge.setText(JSON_Adapter.getAge(employeeDetails));
-
         tvSex.setText(JSON_Adapter.getSex(employeeDetails));
-
         tvDepartment.setText(JSON_Adapter.getDept(employeeDetails));
-
         tvRole.setText(JSON_Adapter.getRole(employeeDetails));
 
     }
@@ -260,11 +391,15 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /*
+    * Delete the Employee from the SQLite DB
+    * Delete the Employee from the Biometrics Database*/
     private void deleteEmployee() {
         // Delete from SQLite db
         DB_Adapter db_adapter = new DB_Adapter(this);
         db_adapter.deleteEntry(id);
 
+        // Delete from the Bio db
         BiometricView bioView = new BiometricView(this);
         bioView.initialize(new InitializationListener() {
             @Override
@@ -311,6 +446,26 @@ public class EmployeeInfoActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setGreeting(){
+        //Determine greeting
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+        String greeting ="";
+
+        if(timeOfDay >= 0 && timeOfDay < 12){
+            //Good morning
+            greeting = "Good Morning ";
+        }else if(timeOfDay >= 12 && timeOfDay < 16){
+            // Good Afternoon
+            greeting = "Good Afternoon ";
+        }else if (timeOfDay >= 16 && timeOfDay < 24){
+            //Good Evening
+            greeting = "Good Evening ";
+        }
+        //post greeting
+        tvGreeting.setText(greeting+firstName);
     }
 
     /*
