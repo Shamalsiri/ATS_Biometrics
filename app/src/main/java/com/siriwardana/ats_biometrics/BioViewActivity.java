@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import android.view.WindowManager;
 import android.view.View;
+
 
 import com.accutime.biometrics.BiometricError;
 import com.accutime.biometrics.BiometricView;
@@ -29,6 +32,8 @@ public class BioViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_bio_view);
 
         bioView = (BiometricView) findViewById(R.id.biometric_view);

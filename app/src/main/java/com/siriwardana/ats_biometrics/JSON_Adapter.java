@@ -18,6 +18,10 @@ public class JSON_Adapter {
     private static final String DEPT = "DEPT";
     private static final String ROLE = "ROLE";
 
+    public JSON_Adapter(){
+
+    }
+
     public static JSONObject makeJSONObject(int id, String fName, String lName, String stAddress,
                                             String city, String state, String zipCode, String dob,
                                             String age, String sex, String dept, String role) throws JSONException {
@@ -51,40 +55,40 @@ public class JSON_Adapter {
         return object.getString(LAST_NAME);
     }
 
-    public static int getStreetAddress(JSONObject object) throws JSONException {
-        return object.getInt(STREET_ADDRESS);
+    public static String getStreetAddress(JSONObject object) throws JSONException {
+        return object.getString(STREET_ADDRESS);
     }
 
-    public static int getCity(JSONObject object) throws JSONException {
-        return object.getInt(CITY);
+    public static String getCity(JSONObject object) throws JSONException {
+        return object.getString(CITY);
     }
 
-    public static int getState(JSONObject object) throws JSONException {
-        return object.getInt(STATE);
+    public static String getState(JSONObject object) throws JSONException {
+        return object.getString(STATE);
     }
 
-    public static int getZipCode(JSONObject object) throws JSONException {
-        return object.getInt(ZIP_CODE);
+    public static String getZipCode(JSONObject object) throws JSONException {
+        return object.getString(ZIP_CODE);
     }
 
-    public static int getDOB(JSONObject object) throws JSONException {
-        return object.getInt(DOB);
+    public static String getDOB(JSONObject object) throws JSONException {
+        return object.getString(DOB);
     }
 
-    public static int getAge(JSONObject object) throws JSONException {
-        return object.getInt(AGE);
+    public static String getAge(JSONObject object) throws JSONException {
+        return object.getString(AGE);
     }
 
-    public static int getSex(JSONObject object) throws JSONException {
-        return object.getInt(SEX);
+    public static String getSex(JSONObject object) throws JSONException {
+        return object.getString(SEX);
     }
 
-    public static int getDept(JSONObject object) throws JSONException {
-        return object.getInt(DEPT);
+    public static String getDept(JSONObject object) throws JSONException {
+        return object.getString(DEPT);
     }
 
-    public static int getRole(JSONObject object) throws JSONException {
-        return object.getInt(ROLE);
+    public static String getRole(JSONObject object) throws JSONException {
+        return object.getString(ROLE);
     }
 
 }
