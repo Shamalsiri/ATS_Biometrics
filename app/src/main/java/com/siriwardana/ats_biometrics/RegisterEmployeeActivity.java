@@ -23,6 +23,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 public class RegisterEmployeeActivity extends AppCompatActivity {
 
     private final String TAG = "SHAMMY";
@@ -108,8 +115,22 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
 
         materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
             @Override
-            public void onPositiveButtonClick(Object selection) {
+            public void onPositiveButtonClick(Object epochTime) {
                 actvDOB.setText(materialDatePicker.getHeaderText());
+
+                int offsetFromUTC = TimeZone.getDefault().getOffset(new Date().getTime()) * -1;
+                Date date = new Date((long) epochTime + offsetFromUTC);
+                Calendar c = new GregorianCalendar();
+
+                c.setTime(date);
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH) +1;
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                int empAge = Period.between(LocalDate.of(year, month, day),
+                        LocalDate.now()).getYears();
+
+                setAge(empAge);
             }
         });
 
@@ -130,6 +151,10 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
                 validateInputs();
             }
         });
+    }
+
+    private void setAge(int EAge){
+        etAge.setText(Integer.toString(EAge));
     }
 
     private void enrollToDB(){

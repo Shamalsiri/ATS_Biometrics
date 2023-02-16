@@ -33,6 +33,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -51,7 +52,7 @@ public class EmployeeInfoActivity extends AppCompatActivity {
     private View editEmployeePopUp;
     private Button btnCancel, btnSave;
     private AutoCompleteTextView actvState;
-    private TextInputEditText etEmployeeID, etFirstName, etLastName, etDOB, etAge,
+    private TextInputEditText etFirstName, etLastName, etDOB, etAge,
             etStAddress, etCity, etZipCode, etDepartment, etRole;
     private RadioGroup rgSex;
     private RadioButton rbSex;
@@ -224,8 +225,19 @@ public class EmployeeInfoActivity extends AppCompatActivity {
                 etDOB.setText(materialDatePicker.getHeaderText());
                 Log.d(TAG, ""+(long)materialDatePicker.getSelection());
 
-                String c = Calendar.getInstance().get(YE);
-                Log.d(TAG, "c: "+c);
+                int offsetFromUTC = TimeZone.getDefault().getOffset(new Date().getTime()) * -1;
+                Date date = new Date((long) epochTime + offsetFromUTC);
+                Calendar c = new GregorianCalendar();
+
+                c.setTime(date);
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH) +1;
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                int empAge = Period.between(LocalDate.of(year, month, day),
+                        LocalDate.now()).getYears();
+
+                setAge(empAge);
             }
         });
 
@@ -248,6 +260,9 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         });
     }
 
+    private void setAge(int EAge){
+        etAge.setText(Integer.toString(EAge));
+    }
     private void checkValues() {
 
         //Check First Name for Changes

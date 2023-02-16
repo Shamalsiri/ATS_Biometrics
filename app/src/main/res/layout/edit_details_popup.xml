@@ -160,8 +160,8 @@
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Age"
-            android:inputType="textPersonName"
-            android:maxLength="50"
+            android:inputType="none"
+            android:maxLength="3"
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -201,8 +201,8 @@
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:hint="Zip Code"
-            android:inputType="textPersonName"
-            android:maxLength="50"
+            android:inputType="number"
+            android:maxLength="6"
             android:textSize="16sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
