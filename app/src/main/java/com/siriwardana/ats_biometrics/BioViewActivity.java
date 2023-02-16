@@ -128,7 +128,7 @@ public class BioViewActivity extends AppCompatActivity {
                 Log.d(TAG, "Enrollment Complete");
                 Message.message(BioViewActivity.this, "Enrollment Complete");
 
-                Intent intent = new Intent(BioViewActivity.this, RegisterEmployee.class);
+                Intent intent = new Intent(BioViewActivity.this, RegisterEmployeeActivity.class);
                 intent.putExtra("ID", ID);
                 startActivity(intent);
             }
@@ -188,7 +188,7 @@ public class BioViewActivity extends AppCompatActivity {
                     id = enrollment.getId();
                     Log.d(TAG, "Identified Id#: " + id);
 
-                    Intent intent = new Intent(BioViewActivity.this, RegisterEmployee.class);
+                    Intent intent = new Intent(BioViewActivity.this, RegisterEmployeeActivity.class);
                     intent.putExtra("ID", id);
                     startActivity(intent);
                 }
