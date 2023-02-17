@@ -156,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String id = etID.getText().toString().trim();
 
+                if(id.compareTo("") == 0 ){
+                    Message.message(MainActivity.this, "Enter an employee id first");
+                    Log.d(TAG,"No Employee ID was entered");
+                    return;
+                }
                 // Delete from SQL db
                 DB_Adapter db_adapter = new DB_Adapter(getApplicationContext());
                 db_adapter.deleteEntry(id);

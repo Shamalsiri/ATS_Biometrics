@@ -234,8 +234,11 @@ public class EmployeeInfoActivity extends AppCompatActivity {
                 int month = c.get(Calendar.MONTH) +1;
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                int empAge = Period.between(LocalDate.of(year, month, day),
-                        LocalDate.now()).getYears();
+                int empAge = 0;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    empAge = Period.between(LocalDate.of(year, month, day),
+                            LocalDate.now()).getYears();
+                }
 
                 setAge(empAge);
             }
@@ -388,7 +391,7 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         tvStreetAddress.setText(JSON_Adapter.getStreetAddress(employeeDetails));
         tvCity.setText(JSON_Adapter.getCity(employeeDetails));
         tvState.setText(JSON_Adapter.getState(employeeDetails));
-        tvZipCode.setText(JSON_Adapter.getState(employeeDetails));
+        tvZipCode.setText(JSON_Adapter.getZipCode(employeeDetails));
         tvAge.setText(JSON_Adapter.getAge(employeeDetails));
         tvSex.setText(JSON_Adapter.getSex(employeeDetails));
         tvDepartment.setText(JSON_Adapter.getDept(employeeDetails));
@@ -401,7 +404,7 @@ public class EmployeeInfoActivity extends AppCompatActivity {
     * */
     private void reEnrollBio() {
         Intent intent = new Intent(this, BioViewActivity.class);
-        intent.putExtra("MODE", "REENROLL");
+        intent.putExtra("BUTTON", "RE_ENROLL");
         intent.putExtra("ID", id);
         startActivity(intent);
     }

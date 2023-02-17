@@ -136,7 +136,7 @@ public class BioViewActivity extends AppCompatActivity {
                 Log.d(TAG, "Enrollment Complete");
                 Message.message(BioViewActivity.this, "Enrollment Complete");
 
-                Intent intent = new Intent(BioViewActivity.this, RegisterEmployeeActivity.class);
+                Intent intent = new Intent(BioViewActivity.this, EmployeeInfoActivity.class);
                 intent.putExtra("ID", ID);
                 startActivity(intent);
             }
@@ -236,7 +236,7 @@ public class BioViewActivity extends AppCompatActivity {
 
     private void reEnroll(){
         bioView.setVisibility(View.VISIBLE);
-
+        Intent intent;
         Enrollment existingEnrollment = null;
         try {
             existingEnrollment = bioView.getEnrollment(ID);
@@ -244,15 +244,18 @@ public class BioViewActivity extends AppCompatActivity {
                 boolean appendable;
                 appendable = bioView.canAppend(ID);
                 if(!appendable){
-                    deleteBio(ID);
+                    //deleteBio(ID);
+                    //enroll
+                } else{
+                    //append here
                 }
+                deleteBio(ID);
                 enroll();
             }
         } catch (BiometricError e) {
             Message.message(getApplicationContext(), "Biometric Error");
             Log.d(TAG, "Biometric Error: " + e.toString());
         }
-
     }
 
     private void deleteRecord(){
