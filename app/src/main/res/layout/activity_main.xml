@@ -28,7 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:backgroundTint="#4d94eb"
-        android:onClick="employee"
         android:text="Employee"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,15 +35,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="15dp"
-        android:backgroundTint="#ffb640"
-        android:text="test 1"
-        android:textColor="@color/white"
-        />
 
     <LinearLayout
         android:id="@+id/ll_manager_options"

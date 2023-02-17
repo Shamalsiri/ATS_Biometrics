@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                Intent intent = new Intent(MainActivity.this, BioViewActivity.class);
-                Intent intent = new Intent(MainActivity.this, RegisterEmployeeActivity.class);
+                Intent intent = new Intent(MainActivity.this, BioViewActivity.class);
                 intent.putExtra("BUTTON", "IDENTIFY");
                 startActivity(intent);
             }
@@ -211,15 +211,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button test = (Button) findViewById(R.id.btn_test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EmployeeInfoActivity.class);
-                intent.putExtra("ID", "1");
-                startActivity(intent);
-            }
-        });
     }
 
     private void checkUserPermission() {

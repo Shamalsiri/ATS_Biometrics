@@ -1,13 +1,17 @@
 package com.siriwardana.ats_biometrics;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import android.view.WindowManager;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 import com.accutime.biometrics.BiometricError;
@@ -17,6 +21,7 @@ import com.accutime.biometrics.EnrollmentListener;
 import com.accutime.biometrics.EnrollmentSession;
 import com.accutime.biometrics.IdentificationListener;
 import com.accutime.biometrics.InitializationListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,9 @@ public class BioViewActivity extends AppCompatActivity {
     private static final String TAG = "SHAMMY";
     private BiometricView bioView;
 
+    private Button btnEnroll, btnCancel;
+    private TextView tvTitle, tvSubTitle;
+    private MaterialAlertDialogBuilder dialogBuilder;
     private static String BUTTON;
     private static String ID;
 
@@ -65,22 +73,22 @@ public class BioViewActivity extends AppCompatActivity {
                     Log.d(TAG, e.getMessage());
                 }
 
-                //Check DB size and open enroll dialog if size = 0
-                int size;
-                try {
-                  size = bioView.getEnrollmentIds().size();
-                    if(size == 0 ){
-                        newEnrollDialog(true);
-                        return;
-                    }
-                } catch (BiometricError e) {
-                    Log.d(TAG, "Error attempting to get db size");
-                    Log.d(TAG, e.toString());
-                }
-
-
                 if(BUTTON.compareTo("IDENTIFY")==0){
                     Log.d(TAG, "ID Mode");
+
+                    //Check DB size and open enroll dialog if size = 0
+                    int size;
+                    try {
+                        size = bioView.getEnrollmentIds().size();
+                        if(size == 0 ){
+                            newEnrollDialog(true);
+                            return;
+                        }
+                    } catch (BiometricError e) {
+                        Log.d(TAG, "Error attempting to get db size");
+                        Log.d(TAG, e.toString());
+                    }
+
                     identify();
 
                 }else if(BUTTON.compareTo("ENROLL")==0){
@@ -188,7 +196,7 @@ public class BioViewActivity extends AppCompatActivity {
                     id = enrollment.getId();
                     Log.d(TAG, "Identified Id#: " + id);
 
-                    Intent intent = new Intent(BioViewActivity.this, RegisterEmployeeActivity.class);
+                    Intent intent = new Intent(BioViewActivity.this, EmployeeInfoActivity.class);
                     intent.putExtra("ID", id);
                     startActivity(intent);
                 }
@@ -275,7 +283,49 @@ public class BioViewActivity extends AppCompatActivity {
         }
     }
 
-    private void newEnrollDialog(boolean b) {
+    private void newEnrollDialog(boolean emptyDB) {
+        dialogBuilder = new MaterialAlertDialogBuilder(this);
+        final View enrollPopup = getLayoutInflater().inflate(R.layout.enroll_popup, null);
 
+        tvTitle = (TextView)  enrollPopup.findViewById(R.id.tv_title);
+        tvSubTitle = (TextView)  enrollPopup.findViewById(R.id.tv_sub_title);
+
+        btnCancel = (Button)  enrollPopup.findViewById(R.id.btn_cancel);
+        btnEnroll = (Button)  enrollPopup.findViewById(R.id.btn_enroll);
+
+        if(emptyDB){
+            tvTitle.setText("No templates on record, please enroll first");
+        } else{
+            tvTitle.setText("No Biometric match found");
+        }
+
+        dialogBuilder.setView(enrollPopup);
+        dialogBuilder.create();
+        AlertDialog dialog = dialogBuilder.show();
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+        btnEnroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+                Intent intent = new Intent(getApplicationContext(), RegisterEmployeeActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                finish();
+            }
+        });
     }
 }
