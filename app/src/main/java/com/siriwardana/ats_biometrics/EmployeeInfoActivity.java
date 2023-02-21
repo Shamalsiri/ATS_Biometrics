@@ -58,6 +58,14 @@ public class EmployeeInfoActivity extends AppCompatActivity {
     private RadioButton rbSex;
     private ArrayAdapter<String> arrayAdapter;
 
+    /**
+     * On Create
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,8 +135,9 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    * Create the dialog box with the editText to edit the employee details */
+    /**
+     * Create the dialog box with the editText to edit the employee details
+     */
     private void createNewEditDialog() {
 
         dialogBuilder = new AlertDialog.Builder(this);
@@ -263,9 +272,17 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set the age textView from the age calculated with the dob
+     * @param EAge
+     */
     private void setAge(int EAge){
         etAge.setText(Integer.toString(EAge));
     }
+
+    /**
+     * Check to see if the user entered any changes to the details
+     */
     private void checkValues() {
 
         //Check First Name for Changes
@@ -355,6 +372,10 @@ public class EmployeeInfoActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Update the db record with the updated data
+     * @throws JSONException
+     */
     private void updateDatabase() throws JSONException {
         JSON_Adapter jAdapter = new JSON_Adapter();
         JSONObject empDetails = jAdapter.makeJSONObject(Integer.parseInt(id), firstName, lastName,
@@ -364,10 +385,11 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         db.editEntry(id, empDetails);
     }
 
-    /*
-    * Get Employee details from the database
-    * Show the retrieved employee info in the activity textview.
-    * */
+    /**
+     * Get Employee details from the database
+     * Show the retrieved employee info in the activity textview.
+     * @throws JSONException
+     */
     private void getEmployeeDetails() throws JSONException {
 
         DB_Adapter db_adapter = new DB_Adapter(this);
@@ -399,9 +421,10 @@ public class EmployeeInfoActivity extends AppCompatActivity {
 
     }
 
-    /* Starts the bio view activity in re-enroll mode
-    *  id and mode are sent as extras
-    * */
+    /**
+     * Starts the bio view activity in re-enroll mode
+     * ID and BUTTON are sent as extras
+     */
     private void reEnrollBio() {
         Intent intent = new Intent(this, BioViewActivity.class);
         intent.putExtra("BUTTON", "RE_ENROLL");
@@ -409,9 +432,10 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /*
-    * Delete the Employee from the SQLite DB
-    * Delete the Employee from the Biometrics Database*/
+    /**
+     * Delete the Employee from the SQLite DB
+     *  Delete the Employee from the Biometrics Database
+     */
     private void deleteEmployee() {
         // Delete from SQLite db
         DB_Adapter db_adapter = new DB_Adapter(this);
@@ -466,6 +490,9 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set the Greeting depending on the time of the day
+     */
     private void setGreeting(){
         //Determine greeting
         Calendar c = Calendar.getInstance();
@@ -475,10 +502,12 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         if(timeOfDay >= 0 && timeOfDay < 12){
             //Good morning
             greeting = "Good Morning ";
-        }else if(timeOfDay >= 12 && timeOfDay < 16){
+        }
+        else if(timeOfDay >= 12 && timeOfDay < 16){
             // Good Afternoon
             greeting = "Good Afternoon ";
-        }else if (timeOfDay >= 16 && timeOfDay < 24){
+        }
+        else if (timeOfDay >= 16 && timeOfDay < 24){
             //Good Evening
             greeting = "Good Evening ";
         }
@@ -486,9 +515,9 @@ public class EmployeeInfoActivity extends AppCompatActivity {
         tvGreeting.setText(greeting+firstName);
     }
 
-    /*
-    * Must be replace with Back trace
-    * */
+    /**
+     * Must be replace with Back trace
+     */
     private void backHome(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
