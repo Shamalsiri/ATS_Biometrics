@@ -17,11 +17,19 @@ public class DB_Adapter {
     private DB_Helper db_helper;
     private Context context;
 
+    /**
+     * Constructor
+     * Set context and DB Helper
+     * @param context
+     */
     public DB_Adapter(Context context){
         this.context = context;
         db_helper = new DB_Helper(context);
     }
 
+    /**
+     * Creates the EMPLOYEE_TABLE table on the database
+     */
     public void createTable(){
         SQLiteDatabase db = db_helper.getWritableDatabase();
         Log.d(TAG, "Creating DB Table");
@@ -33,6 +41,9 @@ public class DB_Adapter {
         }
     }
 
+    /**
+     * Delete the EMPLOYEE_TABLE table from the database
+     */
     public void deleteTable(){
         SQLiteDatabase db = db_helper.getWritableDatabase();
         Log.d(TAG, "Deleting DB Table");
@@ -45,6 +56,12 @@ public class DB_Adapter {
         }
     }
 
+    /**
+     * Insert a record into the EMPLOYEE_TABLE using the values in the JSON object
+     * @param empData
+     * @return
+     * @throws JSONException
+     */
     public long insertEntry(JSONObject empData) throws JSONException {
         int id = empData.getInt(DB_Helper.EID);
         String fName = empData.getString(DB_Helper.FIRST_NAME);
@@ -89,6 +106,13 @@ public class DB_Adapter {
         return result;
     }
 
+    /**
+     * Update an existing record on the EMPLOYEE_TABLE using the values in the JSON Object
+     * @param eID
+     * @param empData
+     * @return
+     * @throws JSONException
+     */
     public int editEntry(String eID, JSONObject empData) throws JSONException {
 
         int id = empData.getInt(DB_Helper.EID);
@@ -132,6 +156,10 @@ public class DB_Adapter {
         return result;
     }
 
+    /**
+     * Delete a record from the EMPLOYEE_TABLE using the given ID
+     * @param eID
+     */
     public void deleteEntry(String eID){
         SQLiteDatabase db = db_helper.getWritableDatabase();
 
@@ -146,6 +174,12 @@ public class DB_Adapter {
         }
     }
 
+    /**
+     * Get a JSON Object containing all the employee details given an id
+     * @param eID
+     * @return
+     * @throws JSONException
+     */
     public JSONObject getEmployeeData(String eID) throws JSONException {
         SQLiteDatabase db = db_helper.getWritableDatabase();
 
@@ -204,6 +238,10 @@ public class DB_Adapter {
         return detailObject;
     }
 
+    /**
+     * Return the number of recrods in the EMPLOYEE_TABLE
+     * @return
+     */
     public int getNumEntries(){
         String query = "SELECT * FROM "+DB_Helper.TABLE_NAME;
 
@@ -214,6 +252,11 @@ public class DB_Adapter {
         return cursor.getCount();
     }
 
+    /**
+     * Check if the id already exists in the database
+     * @param eID
+     * @return
+     */
     public boolean doesEntryExist(String eID){
         String query = "SELECT * FROM "+DB_Helper.TABLE_NAME+" WHERE "+DB_Helper.EID+" = "+eID;
         Log.d(TAG, "Query: "+query);
@@ -232,7 +275,10 @@ public class DB_Adapter {
         }
     }
 
-    public class DB_Helper extends SQLiteOpenHelper {
+    /**
+     * DATABASE HELPER class
+     */
+    static class DB_Helper extends SQLiteOpenHelper {
 
         // DB information
         private static final String DB_NAME = "EMPLOYEE_DB";
@@ -278,6 +324,10 @@ public class DB_Adapter {
             this.context = context;
         }
 
+        /**
+         * Create the Database Table
+         * @param db The database.
+         */
         @Override
         public void onCreate(SQLiteDatabase db) {
             try{
@@ -289,6 +339,12 @@ public class DB_Adapter {
 
         }
 
+        /**
+         * Upgrade the changes depending on the DB changes made and DB_Version
+         * @param db The database.
+         * @param oldVersion The old database version.
+         * @param newVersion The new database version.
+         */
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             try{
