@@ -37,6 +37,14 @@ public class BioViewActivity extends AppCompatActivity {
     private static String BUTTON;
     private static String ID;
 
+    /**
+     * Calls initializeBiometrics method
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +60,11 @@ public class BioViewActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Initialize the Biometric view
+     * Calls the correct method depending on the "BUTTON"
+     * BUTTON: ENROLL, IDENTIFY, RE_ENROLL
+     */
     private void initializeBiometrics() {
         bioView.initialize(new InitializationListener() {
             @Override
@@ -118,6 +131,10 @@ public class BioViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set the Biometric View to visible
+     * Call the Enrollment Listener
+     */
     private void enroll() {
         bioView.setVisibility(View.VISIBLE);
 
@@ -180,6 +197,10 @@ public class BioViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set the Biometric View to visible
+     * Call the Identify Listener
+     */
     private void identify() {
         bioView.setVisibility(View.VISIBLE);
 
@@ -234,21 +255,15 @@ public class BioViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Delete the Biometric Template
+     * Call the Enroll Function
+     */
     private void reEnroll(){
-        bioView.setVisibility(View.VISIBLE);
-        Intent intent;
         Enrollment existingEnrollment = null;
         try {
             existingEnrollment = bioView.getEnrollment(ID);
             if(existingEnrollment != null){
-                boolean appendable;
-                appendable = bioView.canAppend(ID);
-                if(!appendable){
-                    //deleteBio(ID);
-                    //enroll
-                } else{
-                    //append here
-                }
                 deleteBio(ID);
                 enroll();
             }
@@ -258,12 +273,20 @@ public class BioViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Delete the record from the SQL DB
+     * Call the deleteBio method
+     */
     private void deleteRecord(){
         DB_Adapter db = new DB_Adapter(this);
         db.deleteEntry(ID);
         deleteBio(ID);
     }
 
+    /**
+     * Delete the Bio template from the Biometric DB
+     * @param id
+     */
     private void deleteBio(String id){
         //Put id into a List of strings
         List<String> idList = new ArrayList<>(1);
@@ -286,6 +309,11 @@ public class BioViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a dialog box that ask the user if they're interested in enrolling
+     * Title changes depending on if the db is empty or not
+     * @param emptyDB
+     */
     private void newEnrollDialog(boolean emptyDB) {
         dialogBuilder = new MaterialAlertDialogBuilder(this);
         final View enrollPopup = getLayoutInflater().inflate(R.layout.enroll_popup, null);
