@@ -9,7 +9,11 @@ import android.content.Context;
 import android.widget.Toast;
 
 public class Message {
-    //Toast messages long
+    /**
+     * Shows long toast Message
+     * @param context
+     * @param msg
+     */
     public static void message(Context context, String msg){
         Toast.makeText(context,msg, Toast.LENGTH_LONG).show();
     }

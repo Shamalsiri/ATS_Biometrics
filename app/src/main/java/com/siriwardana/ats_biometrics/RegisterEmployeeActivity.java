@@ -47,6 +47,14 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
 
     private ArrayAdapter<String> arrayAdapter;
 
+    /**
+     * On Create
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +84,7 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.states) );
         actvState.setAdapter(arrayAdapter);
+
         // Hide Keyboard
         actvState.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -113,6 +122,16 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
             }
         });
 
+        actvDOB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(actvDOB.getWindowToken(), 0);
+                actvDOB.setShowSoftInputOnFocus(false);
+                materialDatePicker.show(getSupportFragmentManager(),"DATE_PICKER");
+            }
+        });
+
         materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
             @Override
             public void onPositiveButtonClick(Object epochTime) {
@@ -127,8 +146,11 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
                 int month = c.get(Calendar.MONTH) +1;
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                int empAge = Period.between(LocalDate.of(year, month, day),
-                        LocalDate.now()).getYears();
+                int empAge = 0;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    empAge = Period.between(LocalDate.of(year, month, day),
+                            LocalDate.now()).getYears();
+                }
 
                 setAge(empAge);
             }
@@ -153,14 +175,23 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set the Age in the age Textview
+     * @param EAge
+     */
     private void setAge(int EAge){
         etAge.setText(Integer.toString(EAge));
     }
 
+    /**
+     * Checks if the Employee ID exists in the SQLite DB
+     * Enroll the Employee to the SQLite DB
+     */
     private void enrollToDB(){
         DB_Adapter db_adapter = new DB_Adapter(RegisterEmployeeActivity.this);
         if(db_adapter.doesEntryExist(eId)){
             Log.d(TAG, eId+" exists in the database");
+            Message.message(this, "Employee ID already exists, please enter another Employee ID");
         }else {
             Log.d(TAG, eId+" doesn't exists in the database");
             try {
@@ -169,10 +200,14 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
                 Log.d(TAG, "Failed to insert entry to database");
                 Log.d(TAG, "Catch Log: "+e.getMessage());
             }
+            openEnrollBioView();
         }
-        openEnrollBioView();
+
     }
 
+    /**
+     * Calls the Bioview Activity with the ID and BUTTON set to ENROLL
+     */
     private void openEnrollBioView() {
         Intent intent = new Intent(this, BioViewActivity.class);
         intent.putExtra("BUTTON", "ENROLL");
@@ -181,19 +216,21 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Insert the JSON Object with Employee data to the SQLite DB
+     * @throws JSONException
+     */
     private void insertEntryToDB() throws JSONException {
         int id = Integer.parseInt(eId);
         JSONObject object = JSON_Adapter.makeJSONObject(id, fName, lName, stAddress, city, state,
                 zipCode, dob, age, sex, department, role);
         DB_Adapter db_adapter = new DB_Adapter(this);
-
-        if(db_adapter.doesEntryExist(eId)){
-            Message.message(this, "Employee ID exists in the database");
-        }else{
-            db_adapter.insertEntry(object);
-        }
+        db_adapter.insertEntry(object);
     }
 
+    /**
+     * Get the details the User Input
+     */
     private void getInputs(){
         eId = etEmployeeID.getText().toString().trim();
         fName = etFirstName.getText().toString().trim();
@@ -210,16 +247,16 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
 
         role = etRole.getText().toString().trim();
 
-//        etDOB.getText().toString().trim();
         dob = actvDOB.getText().toString().trim();
 
         if(etDepartment.getText().toString().trim() != null){
             department = etDepartment.getText().toString().trim();
         }
-
-        // State is selected in setOnItemClickListener
     }
 
+    /**
+     * Validate the User Inputs
+     */
     private void validateInputs(){
         if(isEmptyOrNull(eId)){
             Message.message(this, "Enter a unique Employee ID#");
@@ -327,6 +364,11 @@ public class RegisterEmployeeActivity extends AppCompatActivity {
         enrollToDB();
     }
 
+    /**
+     * Checks if a string is empty or null
+     * @param value
+     * @return
+     */
     public boolean isEmptyOrNull(String value){
         if(value.compareTo("") == 0 || value == null){
             return true;
